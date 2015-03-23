@@ -1,4 +1,4 @@
-der%>  -- default header
+<%header%>  -- default header
 
 <% local ice_cream = luci.model.uci.cursor():get("ice_cream", "tub", "flavor") %>  -- store the ice cream flavors in the ice_cream variable from the config file ice_cream with type tub and list flavor
 <% local eating = luci.model.uci.cursor():get("current", "ice", "flavor") %>  -- store the current flavor you are eating in the eating variable from the config file current with type ice and option flavor
