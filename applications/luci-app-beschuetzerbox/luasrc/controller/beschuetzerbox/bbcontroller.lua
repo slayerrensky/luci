@@ -28,8 +28,8 @@ function index()
         page.indexignore = true
 
         page          = node("freifunk", "status")
-        page.target   = template("freifunk/public_status")
-        page.title    = _("Status")
+        page.target   = template("beschuetzerbox/wireless")
+        page.title    = _("Wireless")
         page.order    = 20
         page.i18n     = "base"
         page.setuser  = false
