@@ -36,15 +36,7 @@ function index()
         page.setgroup = false
 
         entry({"freifunk", "status.json"}, call("jsonstatus"))
-        entry({"freifunk", "status", "zeroes"}, call("zeroes"), "Testdownload")
-
-        page = assign({"freifunk", "olsr"}, {"admin", "status", "olsr"}, _("OLSR"), 30)
-        page.setuser = false
-        page.setgroup = false
-
-        if nixio.fs.access("/etc/config/luci_statistics") then
-                assign({"freifunk", "graph"}, {"admin", "statistics", "graph"}, _("Statistics"), 40)
-        end
+        entry({"freifunk", "index", "zeroes"}, call("zeroes"), "Testdownload")
 
 
 
@@ -54,3 +46,20 @@ entry({"beschuetzerbox", "bbcontroller", "tab_from_cbi"}, cbi("beschuetzerbox/wi
 
 entry({"beschuetzerbox", "bbcontroller", "tab_from_view"}, template("beschuetzerbox/view_tab"), "View Tab", 2)  --this adds the second sub-tab that is located in <luci-path>/luci-myapplication/view/myapp-mymodule and the file is called view_tab.lua, also set to the second position
 end
+
+
+function zeroes()
+        local string = require "string"
+        local http = require "luci.http"
+        local zeroes = string.rep(string.char(0), 8192)
+        local cnt = 0
+        local lim = 1024 * 1024 * 1024
+
+        http.prepare_content("application/x-many-zeroes")
+
+        while cnt < lim do
+                http.write(zeroes)
+                cnt = cnt + #zeroes
+        end
+end
+
