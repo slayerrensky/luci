@@ -35,9 +35,12 @@ function index()
         page.setuser  = false
         page.setgroup = false
 
+	page = entry({"freifunk", "status", "diag_ping"}, call("diag_ping"), nil)
+        page.leaf = true
+
         entry({"freifunk", "status.json"}, call("jsonstatus"))
         entry({"freifunk", "index", "zeroes"}, call("zeroes"), "Testdownload")
-
+	entry({"freifunk", "status", "wireless_set"}, cbi("beschuetzerbox/wireless"),"Set Wifi", 50)
 
 
 entry({"beschuetzerbox", "bbcontroller"}, firstchild(), "Beschuetzerbox", 30).dependent=false  --this adds the top level tab and defaults to the first sub-tab (tab_from_cbi), also it is set to position 30
@@ -62,4 +65,9 @@ function zeroes()
                 cnt = cnt + #zeroes
         end
 end
+
+function diag_ping(addr)
+        diag_command("ping -c 5 -W 1 %q 2>&1", addr)
+end
+
 
