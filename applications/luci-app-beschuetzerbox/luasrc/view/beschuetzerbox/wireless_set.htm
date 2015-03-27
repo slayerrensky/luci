@@ -1,0 +1,130 @@
+<%# 
+ Create by Rene Galow rensky.g@googlemail.com
+-%>
+
+<%
+local uci = require "luci.model.uci".cursor()
+local tpl = require "luci.template"
+local fs = require "nixio.fs"
+local bb = {}
+local bb = uci:get_all("bebox")
+
+local ww = {}
+local ww = uci:get_all("wireless")
+
+passw = bb.UserConfig.password
+
+function print_r (t, indent, done)
+  done = done or {}
+  indent = indent or ''
+  local nextIndent -- Storage for next indentation value
+  for key, value in pairs (t) do
+    if type (value) == "table" and not done [value] then
+      nextIndent = nextIndent or
+          (indent .. string.rep(' ',string.len(tostring (key))+2))
+          -- Shortcut conditional allocation
+      done [value] = true
+      print (indent .. "[" .. tostring (key) .. "] => Table {");
+      print  (nextIndent .. "{");
+      print_r (value, nextIndent .. string.rep(' ',2), done)
+      print  (nextIndent .. "}");
+    else
+      print  (indent .. "[" .. tostring (key) .. "] => " .. tostring (value).."")
+    end
+  end
+end
+
+function find_setable (t)
+  for key,value in pairs(t) do
+    if not not value.setable then
+      print (value.ssid);
+    end
+  end
+end
+
+%>
+
+<%+header%>
+
+<h2>Change wireless settings</h2>
+<p><%=passw%></p>
+<p><% find_setable(ww) %></p>
+<!-- <pre><% print_r(ww) %></pre> -->
+
+
+<script type="text/javascript" src="<%=resource%>/cbi.js"></script>
+<script type="text/javascript">//<![CDATA[
+        var stxhr = new XHR();
+
+        function update_status(field, proto)
+        {
+                var tool = field.name;
+                var addr = field.value;
+                var protocol = proto ? "6" : "";
+
+                var legend = document.getElementById('diag-rc-legend');
+                var output = document.getElementById('diag-rc-output');
+
+                if (legend && output)
+                {
+                        output.innerHTML =
+                                '<img src="<%=resource%>/icons/loading.gif" alt="<%:Loading%>" style="vertical-align:middle" /> ' +
+                                '<%:Waiting for command to complete...%>'
+                        ;
+
+                        legend.parentNode.style.display = 'block';
+                        legend.style.display = 'inline';
+
+                        stxhr.get('<%=luci.dispatcher.build_url("admin", "network")%>/diag_' + tool + protocol + '/' + addr, null,
+                                function(x)
+                                {
+                                        if (x.responseText)
+                                        {
+                                                legend.style.display = 'none';
+                                                output.innerHTML = String.format('<pre>%h</pre>', x.responseText);
+                                        }
+                                        else
+                                        {
+                                                legend.style.display = 'none';
+                                                output.innerHTML = '<span class="error"><%:Bad address specified!%></span>';
+                                        }
+                                }
+                        );
+                }
+        }
+//]]></script>
+
+<form method="post" action="<%=pcdata(luci.http.getenv("REQUEST_URI"))%>">
+        <div class="cbi-map">
+                <h2><a id="content" name="content"><%:Diagnostics%></a></h2>
+
+                <fieldset class="cbi-section">
+                        <legend><%:Network Utilities%></legend>
+
+                        <br />
+
+                        <div style="width:30%; float:left">
+                                <input style="margin: 5px 0" type="text" value="openwrt.org" name="ping" /><br />
+                                <% if has_ping6 then %>
+                                <select name="ping_proto" style="width:auto">
+                                        <option value="" selected="selected"><%:IPv4%></option>
+                                        <option value="6"><%:IPv6%></option>
+                                </select>
+                                <input type="button" value="<%:Ping%>" class="cbi-button cbi-button-apply" onclick="update_status(this.form.ping, this.form.ping_proto.selectedIndex)" />
+                                <% else %>
+                                <input type="button" value="<%:Ping%>" class="cbi-button cbi-button-apply" onclick="update_status(this.form.ping)" />
+                                <% end %>
+                        </div>
+                </fieldset>
+        </div>
+
+        <fieldset class="cbi-section" style="display:none">
+                <legend id="diag-rc-legend"><%:Collecting data...%></legend>
+                <span id="diag-rc-output"></span>
+        </fieldset>
+</form>
+
+
+
+<%+footer%>
+
