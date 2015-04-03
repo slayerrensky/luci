@@ -1,0 +1,136 @@
+<%# 
+ Create by Rene Galow rensky.g@googlemail.com
+-%>
+
+<%
+local uci = require "luci.model.uci".cursor()
+local tpl = require "luci.template"
+local fs = require "nixio.fs"
+
+local ww = {}
+local ww = uci:get_all("wireless")
+
+
+function find_setable (t)
+  for key,value in pairs(t) do
+    if not not value.setable then
+      print (value.ssid);
+    end
+  end
+end
+
+%>
+
+<%+header%>
+
+<script type="text/javascript" src="<%=resource%>/cbi.js"></script>
+<script type="text/javascript">//<![CDATA[
+        var stxhr = new XHR();
+
+        function update_status(field)
+        {
+                var ssid = field.ssid.value;
+                var key = field.key.value;
+                var password = field.password.value;
+
+                var legend = document.getElementById('diag-rc-legend');
+                var output = document.getElementById('diag-rc-output');
+                var error = false;
+
+                output.innerHTML = "";
+                legend.parentNode.style.display = 'block';
+                legend.style.display = 'inline';
+                if (ssid == "")
+                {
+                        legend.style.display = 'none';
+                        output.innerHTML += '<span class="error">SSID can not be empty. </span>';
+                        error=true;
+                }
+
+                if (key.length < 8 || key.length > 64)
+                {
+                        legend.style.display = 'none';
+                        output.innerHTML += '<span class="error">Key must be between 8 and 63 character. </span>';
+                        error=true;
+                }
+
+                if (password.length == "")
+                {
+                        legend.style.display = 'none';
+                        output.innerHTML += '<span class="error">Password can not be empty. </span>';
+                        error=true;
+                }
+
+		if (legend && output && !error)
+                {
+                        output.innerHTML =
+                                '<img src="<%=resource%>/icons/loading.gif" alt="<%:Loading%>" style="vertical-align:middle" /> ' +
+                                '<%:Waiting for command to complete...%>'
+                        ;
+
+                        legend.parentNode.style.display = 'block';
+                        legend.style.display = 'inline';
+
+                        stxhr.get('<%=luci.dispatcher.build_url("bebox", "wireless", "commit_wireless")%>/' + ssid + '/' + key + '/' + password , null,
+                                function(x)
+                                {
+                                        if (x.responseText)
+                                        {
+                                                legend.style.display = 'none';
+                                                output.innerHTML = '<span class="error">' + x.responseText + '</span>';
+                                        }
+                                        else
+                                        {
+                                                legend.style.display = 'none';
+						output.innerHTML = '<span>Your settings have now been applied.</span>';
+                                        }
+                                }
+                        );
+                }
+        }
+
+
+//]]></script>
+
+<form method="post" action="<%=pcdata(luci.http.getenv("REQUEST_URI"))%>">
+        <div class="cbi-map">
+                <h2><a id="content" name="content">Change wireless settings</a></h2>
+
+                <fieldset class="cbi-section" style="display:none">
+                        <legend id="diag-rc-legend">Collecting data...</legend>
+                        <span id="diag-rc-output"></span>
+                </fieldset>
+
+                <fieldset class="cbi-section">
+                        <legend>Wireless Settings</legend>
+
+                        <div id="container.wireless.cfg033579.general" class="cbi-tabcontainer">
+                        <div id="cbi-wireless-cfg033579-ssid" class="cbi-value">
+                                <label class="cbi-value-title" for="ssid_input">SSID</label>
+                                <div class="cbi-value-field">
+                                        <input id="ssid_input" class="cbi-input-text" type="text" value="<% find_setable(ww) %>" name="ssid" />
+                                </div>
+                        </div>
+                        <div id="cbi-wireless-cfg073579-_wpa_key" class="cbi-value cbi-value-last">
+                                <label class="cbi-value-title" for="key_input">Key</label>
+                                <div class="cbi-value-field">
+                                        <input id="key_input" type="password" value="" name="key" />
+                                </div>
+                        </div>
+                        <div id="cbi-wireless-cfg073579-_wpa_key" class="cbi-value cbi-value-last">
+                                <label class="cbi-value-title" for="password_input">Password</label>
+                                <div class="cbi-value-field">
+                                        <input id="password_input" type="password" value="" name="password" />
+                                </div>
+                        </div>
+                        </div>
+               </fieldset>
+
+        </div>
+        <div class="cbi-page-actions">
+        <input class="cbi-button cbi-button-save" type="button" value="Submit" class="cbi-button cbi-button-apply" onclick="update_status(this.form)" />
+        </div>
+</form>
+
+<%+footer%>
+

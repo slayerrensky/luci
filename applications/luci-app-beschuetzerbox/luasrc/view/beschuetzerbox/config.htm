@@ -1,0 +1,18 @@
+<%#
+ Create by Rene Galow rensky.g@googlemail.com
+-%>
+
+<%+header%>
+<%
+local uci = require "luci.model.uci".cursor()
+local tpl = require "luci.template"
+local fs = require "nixio.fs"
+local bb = {}
+local bb = uci:get_all("bebox")
+%>
+
+<h2>Configure User Setting</h2>
+
+
+<%+footer%>
+
