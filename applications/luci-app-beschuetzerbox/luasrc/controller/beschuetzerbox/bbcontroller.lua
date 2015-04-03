@@ -71,15 +71,15 @@ function commit_wireless(ssid, key, password)
                 while true do
                         local ln = util:read("*l")
                         if not ln then break end
-                        luci.http.write(a)
+                        -- luci.http.write(a)
                         luci.http.write(ln)
                         luci.http.write("\n")
                 end
 
                 util:close()
         end
-        luci.http.write(a)
-        luci.http.write("\n")
+        -- luci.http.write(a)
+        -- luci.http.write("\n")
 
 end
 
