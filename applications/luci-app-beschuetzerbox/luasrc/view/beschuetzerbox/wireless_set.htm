@@ -6,33 +6,10 @@
 local uci = require "luci.model.uci".cursor()
 local tpl = require "luci.template"
 local fs = require "nixio.fs"
-local bb = {}
-local bb = uci:get_all("bebox")
 
 local ww = {}
 local ww = uci:get_all("wireless")
 
-passw = bb.UserConfig.password
-
-function print_r (t, indent, done)
-  done = done or {}
-  indent = indent or ''
-  local nextIndent -- Storage for next indentation value
-  for key, value in pairs (t) do
-    if type (value) == "table" and not done [value] then
-      nextIndent = nextIndent or
-          (indent .. string.rep(' ',string.len(tostring (key))+2))
-          -- Shortcut conditional allocation
-      done [value] = true
-      print (indent .. "[" .. tostring (key) .. "] => Table {");
-      print  (nextIndent .. "{");
-      print_r (value, nextIndent .. string.rep(' ',2), done)
-      print  (nextIndent .. "}");
-    else
-      print  (indent .. "[" .. tostring (key) .. "] => " .. tostring (value).."")
-    end
-  end
-end
 
 function find_setable (t)
   for key,value in pairs(t) do
@@ -47,20 +24,17 @@ end
 <%+header%>
 
 <h2>Change wireless settings</h2>
-<p><%=passw%></p>
 <p><% find_setable(ww) %></p>
-<!-- <pre><% print_r(ww) %></pre> -->
-
 
 <script type="text/javascript" src="<%=resource%>/cbi.js"></script>
 <script type="text/javascript">//<![CDATA[
         var stxhr = new XHR();
 
-        function update_status(field, proto)
+        function update_status(field)
         {
-                var tool = field.name;
-                var addr = field.value;
-                var protocol = proto ? "6" : "";
+                var ssid = field.ssid;
+                var key = field.key;
+                var password = field.password;
 
                 var legend = document.getElementById('diag-rc-legend');
                 var output = document.getElementById('diag-rc-output');
@@ -75,7 +49,7 @@ end
                         legend.parentNode.style.display = 'block';
                         legend.style.display = 'inline';
 
-                        stxhr.get('<%=luci.dispatcher.build_url("admin", "network")%>/diag_' + tool + protocol + '/' + addr, null,
+                        stxhr.get('<%=luci.dispatcher.build_url("bebox", "wireless", "commit_wireless")%>/' + ssid.value + '/' + key.value + '/' + password.value , nu
                                 function(x)
                                 {
                                         if (x.responseText)
@@ -99,21 +73,18 @@ end
                 <h2><a id="content" name="content"><%:Diagnostics%></a></h2>
 
                 <fieldset class="cbi-section">
-                        <legend><%:Network Utilities%></legend>
+                        <legend><%:Wireless Settings%></legend>
 
                         <br />
 
                         <div style="width:30%; float:left">
-                                <input style="margin: 5px 0" type="text" value="openwrt.org" name="ping" /><br />
-                                <% if has_ping6 then %>
-                                <select name="ping_proto" style="width:auto">
-                                        <option value="" selected="selected"><%:IPv4%></option>
-                                        <option value="6"><%:IPv6%></option>
-                                </select>
-                                <input type="button" value="<%:Ping%>" class="cbi-button cbi-button-apply" onclick="update_status(this.form.ping, this.form.ping_proto.selectedIndex)" />
-                                <% else %>
-                                <input type="button" value="<%:Ping%>" class="cbi-button cbi-button-apply" onclick="update_status(this.form.ping)" />
-                                <% end %>
+                                <label for="ssid_input">SSID</label>
+                                <input id="ssid_input" style="margin: 5px 0" type="text" value="<% find_setable(ww) %>" name="ssid" /><br />
+                                <label for"key_input">Key</label>
+                                <input id="key_input" style="margin: 5px 0" type="password" value="" name="key" /><br />
+                                <label for"password_input">Password</label>
+                                <input id="password_input" style="margin: 5px 0" type="password" value="" name="password" /><br />
+                                <input type="button" value="Submit" class="cbi-button cbi-button-apply" onclick="update_status(this.form)" />
                         </div>
                 </fieldset>
         </div>
@@ -124,7 +95,9 @@ end
         </fieldset>
 </form>
 
-
-
+        <fieldset class="cbi-section" style="display:none">
+                <legend id="diag-rc-legend"><%:Collecting data...%></legend>
+                <span id="diag-rc-output"></span>
+        </fieldset>
 <%+footer%>
 
