@@ -27,19 +27,20 @@ function index()
         page.order    = 10
         page.indexignore = true
 
-        page          = node("bebox", "wireless")
+        page          = node("bebox", "config")
         page.target   = template("beschuetzerbox/config")
-        page.title    = _("Wireless")
+        page.title    = _("Config")
         page.order    = 20
         page.i18n     = "base"
         page.setuser  = false
         page.setgroup = false
 
-	page = entry({"bebox", "wireless", "commit_wireless"}, call("commit_wireless"), nil)
+	page = entry({"bebox", "config", "commit_wireless"}, call("commit_wireless"), nil)
         page.leaf = true
 
         entry({"bebox", "index", "zeroes"}, call("zeroes"), "Testdownload")
-	entry({"bebox", "wireless", "wireless_set"}, template("beschuetzerbox/wireless_set"),"Config Wireless", 50)
+	entry({"bebox", "config", "wireless_set"}, template("beschuetzerbox/wireless_set"),"Wireless", 50)
+	entry({"bebox", "config", "password_set"}, template("beschuetzerbox/password_set"),"Password", 60)
 	
 	-- Backand
 	entry({"admin", "bebox"}, firstchild(), "Beschuetzerbox", 30).dependent=false
