@@ -37,6 +37,8 @@ function index()
 
 	page = entry({"bebox", "config", "commit_wireless"}, call("commit_wireless"), nil)
         page.leaf = true
+	page = entry({"bebox", "config", "commit_password"}, call("commit_password"), nil)
+        page.leaf = true
 
         entry({"bebox", "index", "zeroes"}, call("zeroes"), "Testdownload")
 	entry({"bebox", "config", "wireless_set"}, template("beschuetzerbox/wireless_set"),"Wireless", 50)
@@ -84,4 +86,24 @@ function commit_wireless(ssid, key, password)
 
 end
 
+
+function commit_password(newpass, oldpass)
+        luci.http.prepare_content("text/plain")
+        a = string.format("passwordset.sh %s %s",newpass, oldpass)
+        local util = io.popen(a)
+        if util then
+                while true do
+                        local ln = util:read("*l")
+                        if not ln then break end
+                        -- luci.http.write(a)
+                        luci.http.write(ln)
+                        luci.http.write("\n")
+                end
+
+                util:close()
+        end
+        -- luci.http.write(a)
+        -- luci.http.write("\n")
+
+end
 
