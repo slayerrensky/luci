@@ -3,7 +3,7 @@ local sys = require "luci.sys"
 local util = require "luci.util"
 local ip = require "luci.ip"
 
-m = Map("bebox", translate("Config Wireless"), translate("Set a neu SSID and Wirelss Key and validate with you password."))
+m = Map("bebox", translate("Config Wireless"), translate("Set configurations for the customer."))
 d = m:section(TypedSection, "bebox", "User Configuration")
 a = d:option(Value, "password", "User Password"); a.optional=false; a.rmempty = false;
 
