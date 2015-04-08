@@ -362,6 +362,8 @@ s:tab("macfilter", translate("MAC-Filter"))
 s:tab("advanced", translate("Advanced Settings"))
 
 s:taboption("general", Value, "ssid", translate("<abbr title=\"Extended Service Set Identifier\">ESSID</abbr>"))
+-- Beschuetzerbox Flag is set by Customer
+s:taboption("general", Flag, "setable", translate("<abbr title=\"Set if allow customer to change wifi setting.\">By Costumer setable</abbr>"))
 
 mode = s:taboption("general", ListValue, "mode", translate("Mode"))
 mode.override_values = true
