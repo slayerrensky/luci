@@ -1,7 +1,4 @@
 module("luci.controller.beschuetzerbox.bbcontroller", package.seeall)  --notice that new_tab is the name of the file new_tab.lua
-module("luci.tools.status", package.seeall)
-
-local uci = require "luci.model.uci".cursor()
  
 function index()
 
@@ -26,7 +23,7 @@ function index()
 
         page          = node("bebox", "index")
         page.target   = template("beschuetzerbox/index")
-        page.title    = _("&Uuml;ebersicht")
+        page.title    = _("Übersicht")
         page.order    = 10
         page.indexignore = true
 

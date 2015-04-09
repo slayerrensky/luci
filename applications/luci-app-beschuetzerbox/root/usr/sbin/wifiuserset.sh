@@ -35,8 +35,9 @@ if [ "$PASSWORD" != "$UCIPASSWORD" ]; then
 fi
 
 if [ $KEY == "null" ]; then
-
+  uci set wireless.@wifi-iface[$INTERFACE].encryption=none
 else
+  uci set wireless.@wifi-iface[$INTERFACE].encryption=psk2
   uci set wireless.@wifi-iface[$INTERFACE].ssid=$SSID
   uci set wireless.@wifi-iface[$INTERFACE].key=$KEY
 fi
