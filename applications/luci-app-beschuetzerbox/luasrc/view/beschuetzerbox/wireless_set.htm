@@ -43,14 +43,14 @@ end
                 if (ssid == "")
                 {
                         legend.style.display = 'none';
-                        output.innerHTML += '<span class="error">SSID can not be empty. </span>';
+                        output.innerHTML += '<span class="error">SSID darf nicht leer sein.</span>';
                         error=true;
                 }
 
                 if (key.length < 8 || key.length > 64 || key == "")
                 {
                         legend.style.display = 'none';
-                        output.innerHTML += '<span class="error">Key must be between 8 and 63 character or empty for no security.</span>';
+                        output.innerHTML += '<span class="error">Der WLAN Schl&uuml;ssell&auml;nge muss zwischen 8 und 63 Zeichen lang sein, Wenn Sie den Schl&uuml;ssel leer lassen ist die Verschl&uuml;sselung ausgeschaltet.</span>';
                         error=true;
                 }
 		
@@ -62,7 +62,7 @@ end
                 if (password == "")
                 {
                         legend.style.display = 'none';
-                        output.innerHTML += '<span class="error">Password can not be empty. </span>';
+                        output.innerHTML += '<span class="error">Das Passwort darf nicht leer sein.</span>';
                         error=true;
                 }
 
@@ -70,7 +70,7 @@ end
                 {
                         output.innerHTML =
                                 '<img src="<%=resource%>/icons/loading.gif" alt="<%:Loading%>" style="vertical-align:middle" /> ' +
-                                '<%:Waiting for command to complete...%>'
+                                'Einstellungen werden &uuml;bernommen...'
                         ;
 
                         legend.parentNode.style.display = 'block';
@@ -87,7 +87,7 @@ end
                                         else
                                         {
                                                 legend.style.display = 'none';
-						output.innerHTML = '<span>Your settings have now been applied.</span>';
+						output.innerHTML = '<span>Die Einstellungen wurden erfolgreich &uuml;bernommen.</span>';
                                         }
                                 }
                         );
@@ -99,7 +99,7 @@ end
 
 <form method="post" action="<%=pcdata(luci.http.getenv("REQUEST_URI"))%>">
         <div class="cbi-map">
-                <h2><a id="content" name="content">Change wireless settings</a></h2>
+                <h2><a id="content" name="content">Wireless Einstellungen</a></h2>
 
                 <fieldset class="cbi-section" style="display:none">
                         <legend id="diag-rc-legend">Collecting data...</legend>
@@ -107,7 +107,7 @@ end
                 </fieldset>
 
                 <fieldset class="cbi-section">
-                        <legend>Wireless Settings</legend>
+                        <legend>Wireless Einstellungen</legend>
 			
 			<div id="container.wireless.cfg033579.general" class="cbi-tabcontainer">
                         <div id="cbi-wireless-cfg033579-ssid" class="cbi-value">
@@ -118,31 +118,31 @@ end
                                                 <span class="cbi-value-helpicon">
                                                         <img src="/luci-static/resources/cbi/help.gif" alt="Hilfe"/>
                                                 </span>
-                                                Set the new SSID for the user network.
+                                                Festlegen des WLAN Namen.
                                         </div>
                                 </div>
                         </div>
                         <div id="cbi-wireless-cfg073579-_wpa_key" class="cbi-value cbi-value-last">
-                                <label class="cbi-value-title" for="key_input">Key</label>
+                                <label class="cbi-value-title" for="key_input">WLAN Schl&uuml;ssel</label>
                                 <div class="cbi-value-field">
                                         <input id="key_input" type="password" value="" name="key" />
                                         <div class="cbi-value-description">
                                                 <span class="cbi-value-helpicon">
                                                         <img src="/luci-static/resources/cbi/help.gif" alt="Hilfe"/>
                                                 </span>
-                                                Key for WPA2 wireless network. If Key is empty, security is off.
+                                                WPA2 WLAN Schl&uuml;ssell&auml;nge. 8 bis 63 Zeichen, keine Verschl&uuml;sselung der der Schl&uuml;ssel leer bleibt.
                                         </div>
                                 </div>
                         </div>
                         <div id="cbi-wireless-cfg073579-_wpa_key" class="cbi-value cbi-value-last">
-                                <label class="cbi-value-title" for="password_input">Password</label>
+                                <label class="cbi-value-title" for="password_input">Passwort</label>
                                 <div class="cbi-value-field">
                                         <input id="password_input" type="password" value="" name="password" />
                                         <div class="cbi-value-description">
                                                 <span class="cbi-value-helpicon">
                                                         <img src="/luci-static/resources/cbi/help.gif" alt="Hilfe"/>
                                                 </span>
-                                                Authenticating with your password.
+                                                Passwort zur Authentifizierung.
                                         </div>
                                 </div>
                         </div>

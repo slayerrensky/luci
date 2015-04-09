@@ -1,4 +1,7 @@
 module("luci.controller.beschuetzerbox.bbcontroller", package.seeall)  --notice that new_tab is the name of the file new_tab.lua
+module("luci.tools.status", package.seeall)
+
+local uci = require "luci.model.uci".cursor()
  
 function index()
 
@@ -18,12 +21,12 @@ function index()
         page.order    = 5
         page.setuser  = "nobody"
         page.setgroup = "nogroup"
-        page.i18n     = "freifunk"
+        --page.i18n     = "freifunk"
         page.index    = true
 
         page          = node("bebox", "index")
         page.target   = template("beschuetzerbox/index")
-        page.title    = _("Overview")
+        page.title    = _("&Uuml;ebersicht")
         page.order    = 10
         page.indexignore = true
 
@@ -42,7 +45,7 @@ function index()
 
         entry({"bebox", "index", "zeroes"}, call("zeroes"), "Testdownload")
 	entry({"bebox", "config", "wireless_set"}, template("beschuetzerbox/wireless_set"),"Wireless", 50)
-	entry({"bebox", "config", "password_set"}, template("beschuetzerbox/password_set"),"Password", 60)
+	entry({"bebox", "config", "password_set"}, template("beschuetzerbox/password_set"),"Passwort", 60)
 	
 	-- Backand
 	entry({"admin", "bebox"}, firstchild(), "Beschuetzerbox", 30).dependent=false

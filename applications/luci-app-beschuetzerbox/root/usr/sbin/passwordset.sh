@@ -14,7 +14,7 @@ if [ $PASSWORDNEW == "" ]; then
 fi
 
 if [ "$PASSWORD" != "$UCIPASSWORD" ]; then
-    echo "Password not match."
+    echo "Passwort ist falsch."
     exit 1
 fi
 

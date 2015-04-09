@@ -7,23 +7,12 @@
 local uci = require "luci.model.uci".cursor()
 local tpl = require "luci.template"
 local fs = require "nixio.fs"
-local ff = {}
-local ff = uci:get_all("freifunk")
-
-if not ff or not ff.community.name then
-        community = "Freifunk"
-        DefaultText = ""
-        nickname = "No Nickname set"
-else
-        community = ff.community.name
-        DefaultText = ff.community.DefaultText
-        nickname = ff.contact.nickname
-end
 
         defaulttext = '<h2><a id="content" name="content">'..
         'Beschuetzerbox.de'..
         '</a></h2><p>'..
-        'Example Text, please write something..'..
+        'Um Ihren WLAN Namen und WLAN Passwort zu &auml;ndern, klicken Sie oben auf "Wireless". '..
+	'Daf&uuml; ben;ouml;tigen Sie das Ger&auml;tepasswort, dass wir Ihnen zugesendet haben.'..
         '</p>'
 %>
 
