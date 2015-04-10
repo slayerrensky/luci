@@ -34,11 +34,29 @@ function index()
         page.i18n     = "base"
         page.setuser  = false
         page.setgroup = false
-
+	-- Background http get Functions 
 	page = entry({"bebox", "config", "commit_wireless"}, call("commit_wireless"), nil)
         page.leaf = true
 	page = entry({"bebox", "config", "commit_password"}, call("commit_password"), nil)
         page.leaf = true
+	if nixio.fs.access("/etc/config/dhcp") then	
+		page = entry({"bebox", "config", "get_dhcp"}, call("lease_status"), nil)
+	        page.leaf = true
+	end
+
+	local has_wifi = false
+
+        uci:foreach("wireless", "wifi-device",
+                function(s)
+                         has_wifi = true
+                         return false
+                end)
+
+        if has_wifi then
+                page = entry({"admin", "network", "wireless_status"}, call("wifi_status"), nil)
+                page.leaf = true
+	end
+	
 
         entry({"bebox", "index", "zeroes"}, call("zeroes"), "Testdownload")
 	entry({"bebox", "config", "wireless_set"}, template("beschuetzerbox/wireless_set"),"Wireless", 50)
@@ -105,5 +123,33 @@ function commit_password(newpass, oldpass)
         -- luci.http.write(a)
         -- luci.http.write("\n")
 
+end
+
+function lease_status()
+        local s = require "luci.tools.status"
+
+        luci.http.prepare_content("application/json")
+        luci.http.write('[')
+	luci.http.write_json(s.dhcp_leases())
+	luci.http.write(']')
+
+end
+
+function wifi_status(devs)
+        local s    = require "luci.tools.status"
+        local rv   = { }
+
+        local dev
+        for dev in devs:gmatch("[%w%.%-]+") do
+                rv[#rv+1] = s.wifi_network(dev)
+        end
+
+        if #rv > 0 then
+                luci.http.prepare_content("application/json")
+                luci.http.write_json(rv)
+                return
+        end
+
+        luci.http.status(404, "No such device")
 end
 
