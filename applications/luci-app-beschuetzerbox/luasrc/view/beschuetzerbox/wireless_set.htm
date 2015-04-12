@@ -15,6 +15,7 @@ function find_setable (t)
   for key,value in pairs(t) do
     if not not value.setable then
       print (value.ssid);
+      break
     end
   end
 end
@@ -43,14 +44,14 @@ end
                 if (ssid == "")
                 {
                         legend.style.display = 'none';
-                        output.innerHTML += '<span class="error">SSID darf nicht leer sein.</span>';
+                        output.innerHTML += '<span class="error">SSID darf nicht leer sein. </span>';
                         error=true;
                 }
 
-                if (key.length < 8 || key.length > 64 || key == "")
+                if (key.length < 8 || key.length > 64 )
                 {
                         legend.style.display = 'none';
-                        output.innerHTML += '<span class="error">Der WLAN Schl&uuml;ssell&auml;nge muss zwischen 8 und 63 Zeichen lang sein, Wenn Sie den Schl&uuml;ssel leer lassen ist die Verschl&uuml;sselung ausgeschaltet.</span>';
+                        output.innerHTML += '<span class="error">Der WLAN Schl&uuml;ssell&auml;nge muss zwischen 8 und 63 Zeichen lang sein, wenn der Schl&uuml;ssel leer ist wird die Verschl&uuml;sselung ausgeschaltet. </span>';
                         error=true;
                 }
 		
@@ -62,7 +63,7 @@ end
                 if (password == "")
                 {
                         legend.style.display = 'none';
-                        output.innerHTML += '<span class="error">Das Passwort darf nicht leer sein.</span>';
+                        output.innerHTML += '<span class="error">Das Passwort darf nicht leer sein. </span>';
                         error=true;
                 }
 
@@ -118,7 +119,7 @@ end
                                                 <span class="cbi-value-helpicon">
                                                         <img src="/luci-static/resources/cbi/help.gif" alt="Hilfe"/>
                                                 </span>
-                                                Festlegen des WLAN Namen.
+                                                Festlegen des WLAN Name.
                                         </div>
                                 </div>
                         </div>

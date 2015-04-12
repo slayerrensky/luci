@@ -28,13 +28,14 @@ function index()
         page.indexignore = true
 
         page          = node("bebox", "config")
-        page.target   = template("beschuetzerbox/config")
-        page.title    = _("Config")
+        page.target   = template("beschuetzerbox/status")
+        page.title    = _("Konfiguration")
         page.order    = 20
         page.i18n     = "base"
         page.setuser  = false
         page.setgroup = false
-	-- Background http get Functions 
+
+	-- Frondand http get Functions
 	page = entry({"bebox", "config", "commit_wireless"}, call("commit_wireless"), nil)
         page.leaf = true
 	page = entry({"bebox", "config", "commit_password"}, call("commit_password"), nil)
@@ -53,12 +54,13 @@ function index()
                 end)
 
         if has_wifi then
-                page = entry({"admin", "network", "wireless_status"}, call("wifi_status"), nil)
+                page = entry({"bebox", "config", "wireless_status"}, call("wifi_status"), nil)
                 page.leaf = true
 	end
-	
+	-- Frontand
 
         entry({"bebox", "index", "zeroes"}, call("zeroes"), "Testdownload")
+	entry({"bebox", "config", "status"}, template("beschuetzerbox/status"),"Status", 50)
 	entry({"bebox", "config", "wireless_set"}, template("beschuetzerbox/wireless_set"),"Wireless", 50)
 	entry({"bebox", "config", "password_set"}, template("beschuetzerbox/password_set"),"Passwort", 60)
 	
