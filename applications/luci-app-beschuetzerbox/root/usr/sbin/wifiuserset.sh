@@ -10,9 +10,17 @@ KEY=$2
 PASSWORD=$3
 UCIPASSWORD=$(uci get bebox.UserConfig.password)
 
+
+
 if [ x$SSID = x ]; then
     echo "USAGE: $0 SSID KEY PASSWORD"
     exit 1
+fi
+
+LEN=$(echo ${#SSID})
+if [ $LEN -gt 31 ] ;then
+  echo "Die SSID darf nicht laenger als 31 Zeichen sein."
+  exit 1
 fi
 
 
@@ -23,7 +31,7 @@ if [ $KEY != "null" ]; then
   fi
   KEYLENGHT=$(echo ${#KEY})
   if [ $KEYLENGHT -gt 64 ] || [ $KEYLENGHT -lt 8 ]; then
-      echo "Key lenght must be between 8 an 64 character."
+      echo "Key darf nur zwischen 8 und 64 zeichen lang sein."
       exit 1
   fi
 fi
