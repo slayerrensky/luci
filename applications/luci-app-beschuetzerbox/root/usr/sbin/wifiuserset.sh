@@ -18,8 +18,8 @@ if [ x$SSID = x ]; then
 fi
 
 LEN=$(echo ${#SSID})
-if [ $LEN -gt 31 ] ;then
-  echo "Die SSID darf nicht laenger als 31 Zeichen sein."
+if [ $LEN -gt 32 ] ;then
+  echo "Die SSID darf nicht laenger als 32 Zeichen sein."
   exit 1
 fi
 
@@ -46,8 +46,8 @@ if [ $KEY == "null" ]; then
   uci set wireless.@wifi-iface[$INTERFACE].encryption=none
 else
   uci set wireless.@wifi-iface[$INTERFACE].encryption=psk2
-  uci set wireless.@wifi-iface[$INTERFACE].ssid=$SSID
-  uci set wireless.@wifi-iface[$INTERFACE].key=$KEY
+  uci set wireless.@wifi-iface[$INTERFACE].ssid="$SSID"
+  uci set wireless.@wifi-iface[$INTERFACE].key="$KEY"
 fi
 uci commit wireless
 wifi

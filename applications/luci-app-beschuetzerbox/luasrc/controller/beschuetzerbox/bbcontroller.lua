@@ -88,7 +88,7 @@ end
 
 function commit_wireless(ssid, key, password)
         luci.http.prepare_content("text/plain")
-        a = string.format("wifiuserset.sh %s %s %s",ssid, key, password)
+        a = string.format("wifiuserset.sh '%s' '%s' '%s'",ssid, key, password)
         local util = io.popen(a)
         if util then
                 while true do
@@ -109,7 +109,7 @@ end
 
 function commit_password(newpass, oldpass)
         luci.http.prepare_content("text/plain")
-        a = string.format("passwordset.sh %s %s",newpass, oldpass)
+        a = string.format("passwordset.sh '%s' '%s'",newpass, oldpass)
         local util = io.popen(a)
         if util then
                 while true do

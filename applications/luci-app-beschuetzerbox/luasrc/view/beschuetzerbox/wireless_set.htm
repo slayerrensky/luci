@@ -59,10 +59,10 @@ end
 		{
 			key = "null"
 		}
-		if (key > 31 )
+		if (ssid.length > 32 )
 		{
 			legend.style.display = 'none';
-                        output.innerHTML += '<span class="error"Die SSID darf nicht mehr als 31 Ziechen haben. </span>';
+                        output.innerHTML += '<span class="error"Die SSID darf nicht mehr als 32 Ziechen haben. </span>';
                         error=true;
 		}
 

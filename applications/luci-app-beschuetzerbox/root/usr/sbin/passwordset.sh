@@ -18,6 +18,6 @@ if [ "$PASSWORD" != "$UCIPASSWORD" ]; then
     exit 1
 fi
 
-uci set bebox.UserConfig.password=$PASSWORDNEW
+uci set bebox.UserConfig.password="$PASSWORDNEW"
 uci commit bebox
 
