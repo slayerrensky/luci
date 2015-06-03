@@ -28,6 +28,14 @@ end
 <script type="text/javascript">//<![CDATA[
         var stxhr = new XHR();
 
+	function ssidCheck (str)                                                                                                                                        
+        {
+                if (str.match(/^[a-zA-Z0-9-_*+@!. ]*$/)) 
+                        return true;
+                else
+                        return false;
+        }
+
         function update_status(field)
         {
                 var ssid = field.ssid.value;
@@ -48,6 +56,19 @@ end
                         error=true;
                 }
 
+                if (!ssidCheck(ssid))                                                                                                                                   
+                {                                                                                                                                                       
+                        legend.style.display = 'none';                                                                                                                  
+                        output.innerHTML += '<span class="error">Die SSID enth&auml;lt ung&uuml;ltige Zeichen. </span>';                                                
+                        error=true;                                                                                                                                     
+                }                                                                                                                                                       
+                if (ssid.length > 32 )                                                                                                                                  
+                {                                                                                                                                                       
+                        legend.style.display = 'none';                                                                                                                  
+                        output.innerHTML += '<span class="error">Die SSID darf nicht mehr als 32 Ziechen haben. </span>';                                               
+                        error=true;                                                                                                                                     
+                }    
+
                 if (key.length < 8 || key.length > 64 )
                 {
                         legend.style.display = 'none';
@@ -58,12 +79,6 @@ end
 		if (key == "")
 		{
 			key = "null"
-		}
-		if (ssid.length > 32 )
-		{
-			legend.style.display = 'none';
-                        output.innerHTML += '<span class="error"Die SSID darf nicht mehr als 32 Ziechen haben. </span>';
-                        error=true;
 		}
 
                 if (password == "")
