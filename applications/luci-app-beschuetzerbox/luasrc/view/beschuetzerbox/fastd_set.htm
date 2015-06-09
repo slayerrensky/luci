@@ -1,0 +1,183 @@
+<%# 
+ Create by Rene Galow rensky.g@googlemail.com
+-%>
+
+<%
+local uci = require "luci.model.uci".cursor()
+local tpl = require "luci.template"
+local fs = require "nixio.fs"
+
+local ww = {}
+local ww = uci:get_all("wireless")
+
+
+function find_setable (t)
+  for key,value in pairs(t) do
+    if not not value.setable then
+      print (value.ssid);
+      break
+    end
+  end
+end
+
+%>
+
+<%+header%>
+
+<script type="text/javascript" src="<%=resource%>/cbi.js"></script>
+<script type="text/javascript">//<![CDATA[
+        var stxhr = new XHR();
+
+	function ssidCheck (str)                                                                                                                                        
+        {
+                if (str.match(/^[a-zA-Z0-9-_*+@!. ]*$/)) 
+                        return true;
+                else
+                        return false;
+        }
+
+        function update_status(field)
+        {
+                var fastd = field.fastdkey.value;
+                var key2 = field.key2.value;
+		var ipaddr = field.ipaddress.value 
+                var password = field.password.value;
+
+                var legend = document.getElementById('diag-rc-legend');
+                var output = document.getElementById('diag-rc-output');
+                var error = false;
+
+                output.innerHTML = "";
+                legend.parentNode.style.display = 'block';
+                legend.style.display = 'inline';
+                if (fastd == "")
+                {
+                        legend.style.display = 'none';
+                        output.innerHTML += '<span class="error">Fastd Key darf nicht leer sein. </span>';
+                        error=true;
+                }
+
+                if (key2 == "")
+                {                                                                                                                                                       
+                        legend.style.display = 'none';                                                                                                                  
+                        output.innerHTML += '<span class="error">Key2 darf nicht leer sein. </span>';
+                        error=true;                                                                                                                                     
+                }
+                if (ipaddr == "")
+                {                                                                                                                                                       
+                        legend.style.display = 'none';                                                                                                                  
+                        output.innerHTML += '<span class="error">IP darf nicht leer sein. </span>'; 
+                        error=true;                                                                                                                                     
+                }    
+
+                if (password == "")
+                {
+                        legend.style.display = 'none';
+                        output.innerHTML += '<span class="error">Das Passwort darf nicht leer sein. </span>';
+                        error=true;
+                }
+
+		if (legend && output && !error)
+                {
+                        output.innerHTML =
+                                '<img src="<%=resource%>/icons/loading.gif" alt="<%:Loading%>" style="vertical-align:middle" /> ' +
+                                'Einstellungen werden &uuml;bernommen...'
+                        ;
+
+                        legend.parentNode.style.display = 'block';
+                        legend.style.display = 'inline';
+			
+                        stxhr.get('<%=luci.dispatcher.build_url("bebox", "config", "commit_fastd")%>/' + fastd + '/' + key2 + '/' + ipaddr + '/' + password , null,
+                                function(x)
+                                {
+                                        if (x.responseText)
+                                        {
+                                                legend.style.display = 'none';
+                                                output.innerHTML = '<span class="error">' + x.responseText + '</span>';
+                                        }
+                                        else
+                                        {
+                                                legend.style.display = 'none';
+						output.innerHTML = '<span>Router wird neu eingerichtet.</span>';
+                                        }
+                                }
+                        );
+                }
+        }
+
+
+//]]></script>
+
+<form method="post" action="<%=pcdata(luci.http.getenv("REQUEST_URI"))%>">
+        <div class="cbi-map">
+                <h2><a id="content" name="content">Fastd Konfiguration</a></h2>
+
+                <fieldset class="cbi-section" style="display:none">
+                        <legend id="diag-rc-legend">Collecting data...</legend>
+                        <span id="diag-rc-output"></span>
+                </fieldset>
+
+                <fieldset class="cbi-section">
+                        <legend>Einstellungen</legend>
+			
+			<div id="container.wireless.cfg033579.general" class="cbi-tabcontainer">
+                        <div id="kastdkey-input-id" class="cbi-value">
+                                <label class="cbi-value-title" for="fastdkey-input-id">Fastd Key</label>
+                                <div class="cbi-value-field">
+                                        <input id="ssid_input" class="cbi-input-text" type="text" value="" name="fastdkey" />
+                                        <div class="cbi-value-description">
+                                                <span class="cbi-value-helpicon">
+                                                        <img src="/luci-static/resources/cbi/help.gif" alt="Hilfe"/>
+                                                </span>
+                                                Fastd Key aus der Konfigurationsdatei.
+                                        </div>
+                                </div>
+                        </div>
+                        <div id="key2-input-id" class="cbi-value cbi-value-last">
+                                <label class="cbi-value-title" for="key2_input-id">Key2</label>
+                                <div class="cbi-value-field">
+                                        <input id="key_input" class="cbi-input-text" type="text" value="" name="key2" />
+                                        <div class="cbi-value-description">
+                                                <span class="cbi-value-helpicon">
+                                                        <img src="/luci-static/resources/cbi/help.gif" alt="Hilfe"/>
+                                                </span>
+                                                Key2 aus der Konfigurationsdatei.
+                                        </div>
+                                </div>
+                        </div>
+			<div id="ip-input-id" class="cbi-value cbi-value-last">
+                                <label class="cbi-value-title" for="ip-input-id">IP-Adresse</label>
+                                <div class="cbi-value-field">
+                                        <input id="password_input" class="cbi-input-text" type="text" value="" name="ipaddress" />
+                                        <div class="cbi-value-description">
+                                                <span class="cbi-value-helpicon">
+                                                        <img src="/luci-static/resources/cbi/help.gif" alt="Hilfe"/>
+                                                </span>
+                                                IP-Addresse aus der Konfigurationsdatei.
+                                        </div>
+                                </div>
+                        </div>
+                        <div id="password-input-id" class="cbi-value cbi-value-last">
+                                <label class="cbi-value-title" for="password-input-id">Passwort</label>
+                                <div class="cbi-value-field">
+                                        <input id="password_input" class="cbi-input-text" type="password" value="" name="password" />
+                                        <div class="cbi-value-description">
+                                                <span class="cbi-value-helpicon">
+                                                        <img src="/luci-static/resources/cbi/help.gif" alt="Hilfe"/>
+                                                </span>
+                                                Passwort zur Authentifizierung.
+                                        </div>
+                                </div>
+                        </div>
+                        </div>
+
+               </fieldset>
+
+        </div>
+        <div class="cbi-page-actions">
+        <input class="cbi-button cbi-button-save" type="button" value="&Uuml;bernehmen" class="cbi-button cbi-button-apply" onclick="update_status(this.form)" />
+        </div>
+</form>
+
+<%+footer%>
+
