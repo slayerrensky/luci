@@ -72,7 +72,6 @@ function index()
 	-- Backand
 	entry({"admin", "bebox"}, firstchild(), "Beschuetzerbox", 30).dependent=false
 	entry({"admin", "bebox", "config"}, cbi("beschuetzerbox/config"), "Config", 1)
-	entry({"admin", "bebox", "fastd"}, cbi("beschuetzerbox/fastd"), "Fastd",1 )
 
 end
 
@@ -133,9 +132,9 @@ function commit_password(newpass, oldpass)
 
 end
 
-function commit_fastd(fastd, key2, ipaddr, password )
+function commit_fastd(hostname ,fastd, key2, ipaddr, password )
         luci.http.prepare_content("text/plain")
-        a = string.format("fastdset.sh '%s' '%s' '%s' '%s' ",fastd, key2, ipaddr, password)
+        a = string.format("fastdset.sh '%s' '%s' '%s' '%s' '%s' ",hostname, fastd, key2, ipaddr, password)
         local util = io.popen(a)
         if util then
                 while true do

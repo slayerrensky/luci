@@ -28,9 +28,9 @@ end
 <script type="text/javascript">//<![CDATA[
         var stxhr = new XHR();
 
-	function ssidCheck (str)                                                                                                                                        
+	function charCheck (str)                                                                                                                                        
         {
-                if (str.match(/^[a-zA-Z0-9-_*+@!. ]*$/)) 
+                if (str.match(/^[a-zA-Z0-9-_*+@!:.=| \$]*$/))
                         return true;
                 else
                         return false;
@@ -52,27 +52,26 @@ end
                 if (ssid == "")
                 {
                         legend.style.display = 'none';
-                        output.innerHTML += '<span class="error">SSID darf nicht leer sein. </span>';
+                        output.innerHTML += '<span class="error">SSID darf nicht leer sein. </span><br/ >';
                         error=true;
                 }
 
-                if (!ssidCheck(ssid))                                                                                                                                   
-                {                                                                                                                                                       
+                if (!charCheck(ssid))                                                                
+                {
                         legend.style.display = 'none';                                                                                                                  
-                        output.innerHTML += '<span class="error">Die SSID enth&auml;lt ung&uuml;ltige Zeichen. </span>';                                                
-                        error=true;                                                                                                                                     
-                }                                                                                                                                                       
-                if (ssid.length > 32 )                                                                                                                                  
-                {                                                                                                                                                       
-                        legend.style.display = 'none';                                                                                                                  
-                        output.innerHTML += '<span class="error">Die SSID darf nicht mehr als 32 Ziechen haben. </span>';                                               
+                        output.innerHTML += '<span class="error">Die SSID enth&auml;lt ung&uuml;ltige Zeichen. </span><br />';
+                        error=true;
+                }
+                if (ssid.length > 32 )
+                {
+                        legend.style.display = 'none';
+                        output.innerHTML += '<span class="error">Die SSID darf nicht mehr als 32 Ziechen haben. </span><br />';
                         error=true;                                                                                                                                     
                 }    
-
                 if (key.length < 8 || key.length > 64 )
                 {
                         legend.style.display = 'none';
-                        output.innerHTML += '<span class="error">Der WLAN Schl&uuml;ssell&auml;nge muss zwischen 8 und 63 Zeichen lang sein, wenn der Schl&uuml;ssel leer ist wird die Verschl&uuml;sselung ausgeschaltet. </span>';
+                        output.innerHTML += '<span class="error">Der WLAN Schl&uuml;ssell&auml;nge muss zwischen 8 und 63 Zeichen lang sein, wenn der Schl&uuml;ssel leer ist wird die Verschl&uuml;sselung ausgeschaltet. </span><br /> ';
                         error=true;
                 }
 		
@@ -84,7 +83,7 @@ end
                 if (password == "")
                 {
                         legend.style.display = 'none';
-                        output.innerHTML += '<span class="error">Das Passwort darf nicht leer sein. </span>';
+                        output.innerHTML += '<span class="error">Das Passwort darf nicht leer sein. </span><br />';
                         error=true;
                 }
 
@@ -140,7 +139,7 @@ end
                                                 <span class="cbi-value-helpicon">
                                                         <img src="/luci-static/resources/cbi/help.gif" alt="Hilfe"/>
                                                 </span>
-                                                Festlegen des WLAN Name.
+                                                Festlegen des WLAN Name. Maximal 32 Zeichen (a-z A-Z 0-9 -_*+@!:.=| $;,)
                                         </div>
                                 </div>
                         </div>

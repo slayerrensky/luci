@@ -38,6 +38,7 @@ end
 
         function update_status(field)
         {
+		var hostname = field.hostname.value;
                 var fastd = field.fastdkey.value;
                 var key2 = field.key2.value;
 		var ipaddr = field.ipaddress.value 
@@ -50,6 +51,14 @@ end
                 output.innerHTML = "";
                 legend.parentNode.style.display = 'block';
                 legend.style.display = 'inline';
+
+                if (hostname == "")
+                {
+                        legend.style.display = 'none';
+                        output.innerHTML += '<span class="error">Hostname darf nicht leer sein. </span>';
+                        error=true;
+                }
+
                 if (fastd == "")
                 {
                         legend.style.display = 'none';
@@ -87,7 +96,7 @@ end
                         legend.parentNode.style.display = 'block';
                         legend.style.display = 'inline';
 			
-                        stxhr.get('<%=luci.dispatcher.build_url("bebox", "config", "commit_fastd")%>/' + fastd + '/' + key2 + '/' + ipaddr + '/' + password , null,
+                        stxhr.get('<%=luci.dispatcher.build_url("bebox", "config", "commit_fastd")%>/' + hostname + '/' + fastd + '/' + key2 + '/' + ipaddr + '/' + password , null,
                                 function(x)
                                 {
                                         if (x.responseText)
@@ -98,7 +107,10 @@ end
                                         else
                                         {
                                                 legend.style.display = 'none';
-						output.innerHTML = '<span>Router wird neu eingerichtet.</span>';
+						output.innerHTML = '<span>Router wurde eingerichtet und startet jetzt neu.<br />' + 
+						'Die Besch&uuml;tzerbox ist nach dem Neustart &uuml;ber die IP 192.168.133.1 am LAN Port oder &uuml;ber Wireless erreichbar.<br />' +
+						'Bitte verbinden Sie den WAN Port der Besch&uuml;tzerbox mit dem Router Ihres Internet Providers.<br />' + 
+						'Auf dem Router Ihres Internet Providers muss ein DHCP Server laufen.</span>';
                                         }
                                 }
                         );
@@ -121,6 +133,18 @@ end
                         <legend>Einstellungen</legend>
 			
 			<div id="container.wireless.cfg033579.general" class="cbi-tabcontainer">
+			<div id="hostname-input-id" class="cbi-value">
+                                <label class="cbi-value-title" for="hostname-input-id">Hostname</label>
+                                <div class="cbi-value-field">
+                                        <input id="hostname_input" class="cbi-input-text" type="text" value="" name="hostname" />
+                                        <div class="cbi-value-description">
+                                                <span class="cbi-value-helpicon">
+                                                        <img src="/luci-static/resources/cbi/help.gif" alt="Hilfe"/>
+                                                </span>
+                                                Hostname aus der Konfigurationsdatei.
+                                        </div>
+                                </div>
+                        </div>
                         <div id="kastdkey-input-id" class="cbi-value">
                                 <label class="cbi-value-title" for="fastdkey-input-id">Fastd Key</label>
                                 <div class="cbi-value-field">
@@ -148,7 +172,7 @@ end
 			<div id="ip-input-id" class="cbi-value cbi-value-last">
                                 <label class="cbi-value-title" for="ip-input-id">IP-Adresse</label>
                                 <div class="cbi-value-field">
-                                        <input id="password_input" class="cbi-input-text" type="text" value="" name="ipaddress" />
+                                        <input id="ip_input" class="cbi-input-text" type="text" value="" name="ipaddress" />
                                         <div class="cbi-value-description">
                                                 <span class="cbi-value-helpicon">
                                                         <img src="/luci-static/resources/cbi/help.gif" alt="Hilfe"/>
@@ -160,7 +184,7 @@ end
                         <div id="password-input-id" class="cbi-value cbi-value-last">
                                 <label class="cbi-value-title" for="password-input-id">Passwort</label>
                                 <div class="cbi-value-field">
-                                        <input id="password_input" class="cbi-input-text" type="password" value="" name="password" />
+                                        <input id="user_password_input" class="cbi-input-text" type="password" value="" name="password" />
                                         <div class="cbi-value-description">
                                                 <span class="cbi-value-helpicon">
                                                         <img src="/luci-static/resources/cbi/help.gif" alt="Hilfe"/>
