@@ -13,7 +13,7 @@ function index()
         page.index    = false
 
         page          = node("bebox")
-        page.title    = _("Beschuetzerbox")
+        page.title    = _("Konfiguration")
         page.target   = alias("bebox", "index")
         page.order    = 5
         page.setuser  = "nobody"
@@ -40,7 +40,7 @@ function index()
         page.leaf = true
 	page = entry({"bebox", "config", "commit_password"}, call("commit_password"), nil)
         page.leaf = true
-	page = entry({"bebox", "config", "commit_fastd"}, call("commit_fastd"), nil)
+	page = entry({"bebox", "config", "commit_setup"}, call("commit_setup"), nil)
         page.leaf = true
 
 	if nixio.fs.access("/etc/config/dhcp") then	
@@ -66,7 +66,7 @@ function index()
 	entry({"bebox", "config", "status"}, template("beschuetzerbox/status"),"Status", 50)
 	entry({"bebox", "config", "wireless_set"}, template("beschuetzerbox/wireless_set"),"Wireless", 50)
 	entry({"bebox", "config", "password_set"}, template("beschuetzerbox/password_set"),"Passwort", 60)
-	entry({"bebox", "config", "fastd_set"}, template("beschuetzerbox/fastd_set"),"Fastd", 70)
+	entry({"bebox", "config", "setup_set"}, template("beschuetzerbox/setup_set"),"Einrichten", 70)
 	
 	
 	-- Backand
@@ -132,9 +132,9 @@ function commit_password(newpass, oldpass)
 
 end
 
-function commit_fastd(hostname ,fastd, key2, ipaddr, password )
+function commit_setup(hostname ,fastd, key2, ipaddr, password )
         luci.http.prepare_content("text/plain")
-        a = string.format("fastdset.sh '%s' '%s' '%s' '%s' '%s' ",hostname, fastd, key2, ipaddr, password)
+        a = string.format("setupset.sh '%s' '%s' '%s' '%s' '%s' ",hostname, fastd, key2, ipaddr, password)
         local util = io.popen(a)
         if util then
                 while true do

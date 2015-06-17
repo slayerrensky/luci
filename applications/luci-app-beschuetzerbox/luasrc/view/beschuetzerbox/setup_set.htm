@@ -39,7 +39,7 @@ end
         function update_status(field)
         {
 		var hostname = field.hostname.value;
-                var fastd = field.fastdkey.value;
+                var key1 = field.key1.value;
                 var key2 = field.key2.value;
 		var ipaddr = field.ipaddress.value 
                 var password = field.password.value;
@@ -59,10 +59,10 @@ end
                         error=true;
                 }
 
-                if (fastd == "")
+                if (key1 == "")
                 {
                         legend.style.display = 'none';
-                        output.innerHTML += '<span class="error">Fastd Key darf nicht leer sein. </span>';
+                        output.innerHTML += '<span class="error">Key1 darf nicht leer sein. </span>';
                         error=true;
                 }
 
@@ -96,7 +96,7 @@ end
                         legend.parentNode.style.display = 'block';
                         legend.style.display = 'inline';
 			
-                        stxhr.get('<%=luci.dispatcher.build_url("bebox", "config", "commit_fastd")%>/' + hostname + '/' + fastd + '/' + key2 + '/' + ipaddr + '/' + password , null,
+                        stxhr.get('<%=luci.dispatcher.build_url("bebox", "config", "commit_setup")%>/' + hostname + '/' + key1 + '/' + key2 + '/' + ipaddr + '/' + password , null,
                                 function(x)
                                 {
                                         if (x.responseText)
@@ -108,8 +108,8 @@ end
                                         {
                                                 legend.style.display = 'none';
 						output.innerHTML = '<span>Router wurde eingerichtet und startet jetzt neu.<br />' + 
-						'Die Besch&uuml;tzerbox ist nach dem Neustart &uuml;ber die IP 192.168.133.1 am LAN Port oder &uuml;ber Wireless erreichbar.<br />' +
-						'Bitte verbinden Sie den WAN Port der Besch&uuml;tzerbox mit dem Router Ihres Internet Providers.<br />' + 
+						'Der Router ist nach dem Neustart &uuml;ber die IP 192.168.133.1 am LAN Port oder &uuml;ber Wireless erreichbar.<br />' +
+						'Bitte verbinden Sie den WAN Port des Routers mit dem Router Ihres Internet Providers.<br />' + 
 						'Auf dem Router Ihres Internet Providers muss ein DHCP Server laufen.</span>';
                                         }
                                 }
@@ -145,15 +145,15 @@ end
                                         </div>
                                 </div>
                         </div>
-                        <div id="kastdkey-input-id" class="cbi-value">
-                                <label class="cbi-value-title" for="fastdkey-input-id">Fastd Key</label>
+                        <div id="key1-input-id" class="cbi-value">
+                                <label class="cbi-value-title" for="key1-input-id">Key1</label>
                                 <div class="cbi-value-field">
-                                        <input id="ssid_input" class="cbi-input-text" type="text" value="" name="fastdkey" />
+                                        <input id="key1_input" class="cbi-input-text" type="text" value="" name="key1" />
                                         <div class="cbi-value-description">
                                                 <span class="cbi-value-helpicon">
                                                         <img src="/luci-static/resources/cbi/help.gif" alt="Hilfe"/>
                                                 </span>
-                                                Fastd Key aus der Konfigurationsdatei.
+                                                Key1 aus der Konfigurationsdatei.
                                         </div>
                                 </div>
                         </div>

@@ -4,7 +4,7 @@
 # with is defined for costumer user.
 # created by Ren.. Galow, rensky at gmx.de
 
-INTERFACE=$(uci show wireless | grep setable | sed 's/.*\[\(.*\)\][^"]*$/\1/')
+#INTERFACE=$(uci show wireless | grep setable | sed 's/.*\[\(.*\)\][^"]*$/\1/')
 SSID=$1
 KEY=$2
 PASSWORD=$3
@@ -43,12 +43,13 @@ if [ "$PASSWORD" != "$UCIPASSWORD" ]; then
 fi
 
 if [ $KEY == "null" ]; then
-  uci set wireless.@wifi-iface[$INTERFACE].encryption=none
+  uci set wireless.bebox_user.encryption=none
 else
-  uci set wireless.@wifi-iface[$INTERFACE].encryption=psk2
-  uci set wireless.@wifi-iface[$INTERFACE].ssid="$SSID"
-  uci set wireless.@wifi-iface[$INTERFACE].key="$KEY"
+  uci set wireless.bebox_user.encryption=psk2
+  uci set wireless.bebox_user.ssid="$SSID"
+  uci set wireless.bebox_user.key="$KEY"
 fi
+
 uci commit wireless
 wifi
 
