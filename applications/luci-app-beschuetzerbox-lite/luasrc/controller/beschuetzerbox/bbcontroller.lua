@@ -42,8 +42,6 @@ function index()
         page.leaf = true
 	page = entry({"bebox", "config", "commit_setup"}, call("commit_setup"), nil)
         page.leaf = true
-	page = entry({"bebox", "config", "commit_splash"}, call("commit_splash"), nil)
-        page.leaf = true
 
 	if nixio.fs.access("/etc/config/dhcp") then	
 		page = entry({"bebox", "config", "get_dhcp"}, call("lease_status"), nil)
@@ -69,7 +67,6 @@ function index()
 	entry({"bebox", "config", "wireless_set"}, template("beschuetzerbox/wireless_set"),"Wireless", 50)
 	entry({"bebox", "config", "password_set"}, template("beschuetzerbox/password_set"),"Passwort", 60)
 	entry({"bebox", "config", "setup_set"}, template("beschuetzerbox/setup_set"),"Einrichten", 80)
-	entry({"bebox", "config", "splash_set"}, template("beschuetzerbox/splash_set"),"Splash", 70)
 	
 	-- Backand
 	entry({"admin", "bebox"}, firstchild(), "Beschuetzerbox", 30).dependent=false
@@ -137,23 +134,6 @@ end
 function commit_setup(hostname ,fastd, key2, ipaddr, password )
         luci.http.prepare_content("text/plain")
         a = string.format("setupset.sh '%s' '%s' '%s' '%s' '%s' ",hostname, fastd, key2, ipaddr, password)
-        local util = io.popen(a)
-        if util then
-                while true do
-                        local ln = util:read("*l")
-                        if not ln then break end
-                        -- luci.http.write(a)
-                        luci.http.write(ln)
-                        luci.http.write("\n")
-                end
-
-                util:close()
-        end
-end
-
-function commit_splash(time ,url, up, down, password )
-        luci.http.prepare_content("text/plain")
-        a = string.format("splashset.sh '%s' '%s' '%s' '%s' '%s' ",time, url, up, down, password)
         local util = io.popen(a)
         if util then
                 while true do

@@ -1,0 +1,204 @@
+<%# 
+ Create by Rene Galow rensky.g@googlemail.com
+-%>
+
+<%
+local uci = require "luci.model.uci".cursor()
+local tpl = require "luci.template"
+local fs = require "nixio.fs"
+
+local ww = {}
+local ww = uci:get_all("wireless")
+
+
+function find_setable (t)
+  for key,value in pairs(t) do
+    if not not value.setable then
+      print (value.ssid);
+      break
+    end
+  end
+end
+
+%>
+
+<%+header%>
+
+<script type="text/javascript" src="<%=resource%>/cbi.js"></script>
+<script type="text/javascript">//<![CDATA[
+        var stxhr = new XHR();
+
+	function ssidCheck (str)                                                                                                                                        
+        {
+                if (str.match(/^[a-zA-Z0-9-_*+@!. ]*$/)) 
+                        return true;
+                else
+                        return false;
+        }
+
+        function update_status(field)
+        {
+		var time = field.time.value;
+                var url = field.url.value;
+                var upload = field.upload.value;
+		var download = field.download.value 
+                var password = field.password.value;
+
+                var legend = document.getElementById('diag-rc-legend');
+                var output = document.getElementById('diag-rc-output');
+                var error = false;
+
+                output.innerHTML = "";
+                legend.parentNode.style.display = 'block';
+                legend.style.display = 'inline';
+
+                if (time == "")
+                {
+                        legend.style.display = 'none';
+                        output.innerHTML += '<span class="error">Freischaltzeit darf nicht leer sein. </span>';
+                        error=true;
+                }
+
+                if (url == "")
+                {
+                        legend.style.display = 'none';
+                        output.innerHTML += '<span class="error">Url darf nicht leer sein. </span>';
+                        error=true;
+                }
+
+                if (upload == "")
+                {                                                                                                                                                       
+                        legend.style.display = 'none';                                                                                                                  
+                        output.innerHTML += '<span class="error">Upload Speed darf nicht leer sein. </span>';
+                        error=true;                                                                                                                                     
+                }
+                if (download == "")
+                {                                                                                                                                                       
+                        legend.style.display = 'none';                                                                                                                  
+                        output.innerHTML += '<span class="error">Download Speed darf nicht leer sein. </span>'; 
+                        error=true;                                                                                                                                     
+                }    
+
+                if (password == "")
+                {
+                        legend.style.display = 'none';
+                        output.innerHTML += '<span class="error">Das Passwort darf nicht leer sein. </span>';
+                        error=true;
+                }
+
+		if (legend && output && !error)
+                {
+                        output.innerHTML =
+                                '<img src="<%=resource%>/icons/loading.gif" alt="<%:Loading%>" style="vertical-align:middle" /> ' +
+                                'Einstellungen werden &uuml;bernommen...'
+                        ;
+
+                        legend.parentNode.style.display = 'block';
+                        legend.style.display = 'inline';
+			
+                        stxhr.get('<%=luci.dispatcher.build_url("bebox", "config", "commit_splash")%>/' + time + '/' + url + '/' + upload + '/' + download + '/' + password , null,
+                                function(x)
+                                {
+                                        if (x.responseText)
+                                        {
+                                                legend.style.display = 'none';
+                                                output.innerHTML = '<span class="error">' + x.responseText + '</span>';
+                                        }
+                                        else
+                                        {
+                                                legend.style.display = 'none';
+						output.innerHTML = '<span>Einstellungen erfolgreich gespeichert.</span>';
+                                        }
+                                }
+                        );
+                }
+        }
+
+
+//]]></script>
+
+<form method="post" action="<%=pcdata(luci.http.getenv("REQUEST_URI"))%>">
+        <div class="cbi-map">
+                <h2><a id="content" name="content">Fastd Konfiguration</a></h2>
+
+                <fieldset class="cbi-section" style="display:none">
+                        <legend id="diag-rc-legend">Collecting data...</legend>
+                        <span id="diag-rc-output"></span>
+                </fieldset>
+
+                <fieldset class="cbi-section">
+                        <legend>Einstellungen</legend>
+			
+			<div id="container.wireless.cfg033579.general" class="cbi-tabcontainer">
+			<div id="time-input-id" class="cbi-value">
+                                <label class="cbi-value-title" for="time-input-id">Freischaltezeit (h)</label>
+                                <div class="cbi-value-field">
+                                        <input id="hostname_input" class="cbi-input-text" type="text" value="" name="time" />
+                                        <div class="cbi-value-description">
+                                                <span class="cbi-value-helpicon">
+                                                        <img src="/luci-static/resources/cbi/help.gif" alt="Hilfe"/>
+                                                </span>
+                                                Freischaltezeit in Stunden.
+                                        </div>
+                                </div>
+                        </div>
+                        <div id="url-input-id" class="cbi-value">
+                                <label class="cbi-value-title" for="url-input-id">Weiterleiten nach (URL)</label>
+                                <div class="cbi-value-field">
+                                        <input id="url_input" class="cbi-input-text" type="text" value="" name="url" />
+                                        <div class="cbi-value-description">
+                                                <span class="cbi-value-helpicon">
+                                                        <img src="/luci-static/resources/cbi/help.gif" alt="Hilfe"/>
+                                                </span>
+                                                An diese Url wird der Wlan Client nach dem Akzeptieren weiter geleitet.
+                                        </div>
+                                </div>
+                        </div>
+                        <div id="upload-input-id" class="cbi-value cbi-value-last">
+                                <label class="upload-value-title" for="upload_input-id">Upload Speed</label>
+                                <div class="cbi-value-field">
+                                        <input id="upload_input" class="cbi-input-text" type="text" value="" name="upload" />
+                                        <div class="cbi-value-description">
+                                                <span class="cbi-value-helpicon">
+                                                        <img src="/luci-static/resources/cbi/help.gif" alt="Hilfe"/>
+                                                </span>
+                                                Upload Geschwindigkeit f&uuml; den Client.
+                                        </div>
+                                </div>
+                        </div>
+			<div id="download-input-id" class="cbi-value cbi-value-last">
+                                <label class="download-value-title" for="download-input-id">Download Speed</label>
+                                <div class="cbi-value-field">
+                                        <input id="ip_input" class="cbi-input-text" type="text" value="" name="download" />
+                                        <div class="cbi-value-description">
+                                                <span class="cbi-value-helpicon">
+                                                        <img src="/luci-static/resources/cbi/help.gif" alt="Hilfe"/>
+                                                </span>
+                                                Download Geschwindigkeit f&uuml;r den Client.
+                                        </div>
+                                </div>
+                        </div>
+                        <div id="password-input-id" class="cbi-value cbi-value-last">
+                                <label class="cbi-value-title" for="password-input-id">Passwort</label>
+                                <div class="cbi-value-field">
+                                        <input id="user_password_input" class="cbi-input-text" type="password" value="" name="password" />
+                                        <div class="cbi-value-description">
+                                                <span class="cbi-value-helpicon">
+                                                        <img src="/luci-static/resources/cbi/help.gif" alt="Hilfe"/>
+                                                </span>
+                                                Passwort zur Authentifizierung.
+                                        </div>
+                                </div>
+                        </div>
+                        </div>
+
+               </fieldset>
+
+        </div>
+        <div class="cbi-page-actions">
+        <input class="cbi-button cbi-button-save" type="button" value="&Uuml;bernehmen" class="cbi-button cbi-button-apply" onclick="update_status(this.form)" />
+        </div>
+</form>
+
+<%+footer%>
+
